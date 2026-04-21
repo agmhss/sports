@@ -169,30 +169,52 @@
             const board = document.getElementById('main-board');
             board.innerHTML = '';
 
-            rows.slice(1).forEach(cols => {
-                if (cols.length < 2 || !cols[0]) return;
-                const cat = cols[0], content = cols[1], subtext = cols[2] ? cols[2] : '';
+            const category = cols[0].replace(/"/g, "").trim();
+                const content = cols[1].replace(/"/g, "").trim();
+                const subtext = cols[2] ? cols[2].replace(/"/g, "").trim() : '';
 
-                if (["Vision", "Mission", "Announcement", "Achievement"].includes(cat)) {
-                    let title = cat === "Achievement" ? "சாதனைகள் 🏆" : (cat === "Vision" ? "நோக்கம்" : cat);
-                    board.innerHTML += `<div class="paper-note"><h3>${title}</h3><p>${content}</p></div>`;
+                if (category === "Vision" || category === "Mission" || category === "Announcement") {
+                    const title = category === "Vision" ? "நோக்கம்" : (category === "Mission" ? "செயல்பாடுகள்" : "அறிவிப்பு");
+                    board.innerHTML += `
+                        <div class="paper-note">
+                            <h3>${title}</h3>
+                            <p>${content}</p>
+                        </div>`;
                 } 
-                else if (cat === "Poster") {
-                    board.innerHTML += `<div class="paper-note" style="text-align:center;"><h3>${content}</h3>
-                        <img src="${getRobustImageUrl(subtext)}" class="poster-img" onerror="this.style.display='none'"></div>`;
+                else if (category === "Poster") {
+                    const finalSrc = getRobustImageUrl(subtext);
+
+                    // படம் லோட் ஆகவில்லை என்றால் சிவப்பு நிறத்தில் பிழைச் செய்தி காட்டும்
+                    board.innerHTML += `
+                        <div class="paper-note" style="text-align:center;">
+                            <h3>${content}</h3>
+                            <img src="${finalSrc}" class="poster-img" alt="Poster" 
+                                 onerror="this.onerror=null; this.src='https://via.placeholder.com/400x200?text=Image+Blocked'; this.nextElementSibling.style.display='block';">
+                            <span class="error-msg" style="display:none;">
+                                ⚠️ இந்தப் படத்தைப் பார்க்க அனுமதி இல்லை. கூகுள் டிரைவில் <b>"Anyone with the link"</b> என்பதை உறுதி செய்யவும்.
+                            </span>
+                        </div>`;
                 }
-                else if (cat === "Staff") {
+                else if (category === "Staff") {
                     let table = document.getElementById('staff-table');
                     if (!table) {
-                        board.innerHTML += `<div class="paper-note"><h3>உடற்கல்வி ஆசிரியர்கள் (PET)</h3>
-                            <table class="dynamic-table" id="staff-table"><tr><th>பெயர்</th><th>பதவி</th></tr></table></div>`;
+                        board.innerHTML += `
+                            <div class="paper-note">
+                                <h3>பொறுப்பு ஆசிரியர்கள்</h3>
+                                <table id="staff-table"><tr><th>பெயர்</th><th>பதவி</th></tr></table>
+                            </div>`;
                         table = document.getElementById('staff-table');
                     }
                     table.innerHTML += `<tr><td>${content}</td><td>${subtext}</td></tr>`;
                 }
+                else if (category === "Link") {
+                    linksArea.innerHTML += `<a href="${subtext}" target="_blank">🔗 ${content}</a>`;
+                }
             });
-        } catch (e) { console.error(e); }
-    }
+
+        } catch (error) {
+            console.error("Error:", error);
+            document.getElementById('main-board').innerHTML = "<p style='color:red; text-align:center; grid-column:1/-1;'>தகவல்களைப் பெறுவதில் சிக்கல் ஏற்பட்டுள்ளது.</p>";
 
     // 2. Load Live Scoreboard
     async function loadScoreboard() {
