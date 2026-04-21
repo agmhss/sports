@@ -152,9 +152,9 @@
 
 <script>
     // ⚠️ உங்களின் 3 CSV லிங்குகளை இங்கே பேஸ்ட் செய்யவும்
-    const webContentURL = "YOUR_WEBCONTENT_CSV_URL_HERE"; 
-    const scoreboardURL = "YOUR_SCOREBOARD_CSV_URL_HERE"; 
-    const studentsURL   = "YOUR_STUDENTS_CSV_URL_HERE"; 
+    const webContentURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTvUa-lafFet8lATvvxw5UIJwI0uQ4B_s2YCd9FyAycBRGjgx_iIDmcDSPx76Vbe-SQH0gvNhOFJcrO/pub?gid=0&single=true&output=csv"; 
+    const scoreboardURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTvUa-lafFet8lATvvxw5UIJwI0uQ4B_s2YCd9FyAycBRGjgx_iIDmcDSPx76Vbe-SQH0gvNhOFJcrO/pub?gid=217250781&single=true&output=csv"; 
+    const studentsURL   = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTvUa-lafFet8lATvvxw5UIJwI0uQ4B_s2YCd9FyAycBRGjgx_iIDmcDSPx76Vbe-SQH0gvNhOFJcrO/pub?gid=217250781&single=true&output=csv"; 
 
     // CSV Parser & Image Helper
     function parseCSV(data) {
