@@ -37,26 +37,13 @@
         }
 
         .home-btn {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            background: var(--primary-color);
-            color: white;
-            text-decoration: none;
-            padding: 8px 18px;
-            border-radius: 4px;
-            font-weight: bold;
-            font-size: 0.9rem;
-            z-index: 10;
+            position: absolute; top: 15px; left: 15px;
+            background: var(--primary-color); color: white;
+            text-decoration: none; padding: 8px 18px;
+            border-radius: 4px; font-weight: bold; font-size: 0.9rem; z-index: 10;
         }
 
-        header {
-            text-align: center;
-            border-bottom: 2px solid #ddd;
-            margin-bottom: 30px;
-            padding-bottom: 10px;
-        }
-
+        header { text-align: center; border-bottom: 2px solid #ddd; margin-bottom: 30px; padding-bottom: 10px; }
         header h1 { color: var(--primary-color); margin: 0; font-size: 1.8rem; }
         header h2 { color: #555; margin: 5px 0; font-size: 1.2rem; }
 
@@ -79,31 +66,27 @@
 
         h3 { color: var(--primary-color); border-bottom: 1px solid #eee; padding-bottom: 5px; margin-top: 0; }
         
+        /* Scoreboard */
         .scoreboard-container {
-            display: flex;
-            justify-content: space-around;
-            flex-wrap: wrap;
-            margin-top: 20px;
+            display: flex; justify-content: space-around; flex-wrap: wrap; margin-top: 20px;
         }
-
         .house-card {
-            text-align: center; padding: 15px; border-radius: 8px; width: 120px; margin: 10px;
-            background: #fff; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border: 2px dashed #ccc;
+            text-align: center; padding: 15px; border-radius: 8px; width: 130px; margin: 10px;
+            background: #fff; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border: 3px solid #ccc;
         }
         
-        .house-kurinji { border-color: #4CAF50; } .house-kurinji h4 { color: #4CAF50; }
-        .house-mullai { border-color: #2196F3; } .house-mullai h4 { color: #2196F3; }
-        .house-marutham { border-color: #795548; } .house-marutham h4 { color: #795548; }
-        .house-neithal { border-color: #009688; } .house-neithal h4 { color: #009688; }
-        .house-palai { border-color: #FF9800; } .house-palai h4 { color: #FF9800; }
+        .house-குறிஞ்சி { border-color: #4CAF50; color: #4CAF50; }
+        .house-முல்லை { border-color: #2196F3; color: #2196F3; }
+        .house-மருதம் { border-color: #795548; color: #795548; }
+        .house-நெய்தல் { border-color: #009688; color: #009688; }
+        .house-பாலை { border-color: #FF9800; color: #FF9800; }
 
-        .house-points { font-size: 2.5rem; font-weight: bold; color: #333; }
+        .house-points { font-size: 2.2rem; font-weight: bold; color: #333; display: block; }
         
-        .poster-img { width: 100%; max-height: 400px; object-fit: contain; border-radius: 4px; margin-top: 10px; border: 1px solid #ddd; }
+        .poster-img { width: 100%; max-height: 450px; object-fit: contain; border-radius: 4px; margin-top: 10px; }
         
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        th { background: #f2f2f2; }
+        .link-item { display: block; margin: 8px 0; color: #0047AB; text-decoration: none; font-weight: bold; }
+        .link-item:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
@@ -119,19 +102,17 @@
     <div class="content-grid">
         <div class="paper-note full-width-note" style="background-color: #fffdf0; border-top-color: #FFD700;">
             <h3 style="color: #b8860b; text-align: center;">🏆 இல்லங்களின் புள்ளிப்பட்டியல் (Live Scoreboard) 🏆</h3>
-            <div class="scoreboard-container" id="scoreboard-container">
-                <p style="color:#888;">புள்ளிகள் ஏற்றப்படுகின்றன...</p>
+            <div id="scoreboard-container" class="scoreboard-container">
+                <p>புள்ளிகள் ஏற்றப்படுகின்றன...</p>
             </div>
         </div>
     </div>
 
-    <div class="content-grid" id="main-board">
-        </div>
+    <div class="content-grid" id="main-board"></div>
+
 </div>
 
 <script>
-    const webContentURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTvUa-lafFet8lATvvxw5UIJwI0uQ4B_s2YCd9FyAycBRGjgx_iIDmcDSPx76Vbe-SQH0gvNhOFJcrO/pub?gid=0&single=true&output=csv";
-    <script>
     const webContentURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTvUa-lafFet8lATvvxw5UIJwI0uQ4B_s2YCd9FyAycBRGjgx_iIDmcDSPx76Vbe-SQH0gvNhOFJcrO/pub?gid=0&single=true&output=csv";
     const scoreboardURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTvUa-lafFet8lATvvxw5UIJwI0uQ4B_s2YCd9FyAycBRGjgx_iIDmcDSPx76Vbe-SQH0gvNhOFJcrO/pub?gid=866796290&single=true&output=csv";
 
@@ -140,12 +121,31 @@
     }
     
     function getRobustImageUrl(url) {
-        if (!url || url.trim() === "") return "https://via.placeholder.com/400x200?text=No+URL+Provided";
+        if (!url) return "";
         const idMatch = url.match(/[-\w]{25,}/);
-        if (idMatch && url.includes("drive.google.com")) {
-            return `https://drive.google.com/uc?export=view&id=${idMatch[0]}`;
-        }
-        return url; // Returns original if it's already a direct link
+        return idMatch ? `https://drive.google.com/uc?export=view&id=${idMatch[0]}` : url;
+    }
+
+    async function loadScoreboard() {
+        try {
+            const res = await fetch(scoreboardURL);
+            const rows = parseCSV(await res.text());
+            const container = document.getElementById('scoreboard-container');
+            container.innerHTML = '';
+
+            rows.slice(1).forEach(cols => {
+                if (!cols[0]) return;
+                const name = cols[0].trim();
+                const pts = cols[1] || "0";
+                // Generates class based on name (e.g., house-குறிஞ்சி)
+                container.innerHTML += `
+                    <div class="house-card house-${name}">
+                        <h4 style="margin:0">${name}</h4>
+                        <span class="house-points">${pts}</span>
+                        <small style="color:#666">புள்ளிகள்</small>
+                    </div>`;
+            });
+        } catch (e) { console.error("Scoreboard Error", e); }
     }
 
     async function loadWebContent() {
@@ -157,103 +157,36 @@
 
             rows.forEach(cols => {
                 if (cols.length < 2 || !cols[0]) return;
-                
                 const category = cols[0].trim();
                 const content = cols[1].trim();
                 const subtext = cols[2] ? cols[2].trim() : '';
 
-                // Handle Text Notes
                 if (category === "Vision" || category === "Mission" || category === "Announcement") {
                     const title = category === "Vision" ? "நோக்கம்" : (category === "Mission" ? "செயல்பாடுகள்" : "அறிவிப்பு");
                     board.innerHTML += `<div class="paper-note"><h3>${title}</h3><p>${content}</p></div>`;
                 } 
-                
-                // Handle Poster Images
                 else if (category === "Poster") {
-                    const finalSrc = getRobustImageUrl(subtext);
                     board.innerHTML += `
                         <div class="paper-note" style="text-align:center;">
                             <h3>${content}</h3>
-                            <img src="${finalSrc}" class="poster-img" alt="Poster" 
-                                 onerror="this.src='https://via.placeholder.com/400x200?text=Check+Drive+Permissions';">
+                            <img src="${getRobustImageUrl(subtext)}" class="poster-img" onerror="this.src='https://via.placeholder.com/400x200?text=Image+Not+Found';">
                         </div>`;
                 }
-
-                // Handle Links (The Fix)
                 else if (category === "Link") {
-                    let linksNote = document.getElementById('links-note');
-                    if (!linksNote) {
-                        board.innerHTML += `
-                            <div class="paper-note" id="links-note">
-                                <h3>முக்கிய இணைப்புகள்</h3>
-                                <div id="links-list" style="display: flex; flex-direction: column; gap: 10px;"></div>
-                            </div>`;
-                        linksNote = document.getElementById('links-list');
+                    let linkBox = document.getElementById('link-box');
+                    if (!linkBox) {
+                        board.innerHTML += `<div class="paper-note" id="link-box"><h3>முக்கிய இணைப்புகள்</h3><div id="link-list"></div></div>`;
+                        linkBox = document.getElementById('link-list');
                     }
-                    const list = document.getElementById('links-list');
-                    list.innerHTML += `<a href="${subtext}" target="_blank" style="color: var(--primary-color); text-decoration: none; font-weight: bold;">🔗 ${content}</a>`;
+                    document.getElementById('link-list').innerHTML += `<a href="${subtext}" target="_blank" class="link-item">🔗 ${content}</a>`;
                 }
             });
-        } catch (error) {
-            console.error("Error loading content:", error);
-        }
+        } catch (e) { console.error("Content Error", e); }
     }
 
-    async function loadScoreboard() {
-        try {
-            const res = await fetch(scoreboardURL);
-            const rows = parseCSV(await res.text());
-            const container = document.getElementById('scoreboard-container');
-            if (!container) return;
-            container.innerHTML = '';
-
-            rows.slice(1).forEach(cols => {
-                if (!cols[0]) return;
-                const houseName = cols[0];
-                const points = cols[1] || "0";
-                container.innerHTML += `
-                    <div class="house-card">
-                        <h4 style="margin: 0;">${houseName}</h4>
-                        <span class="house-points">${points}</span><br><small>புள்ளிகள்</small>
-                    </div>`;
-            });
-        } catch (e) { console.error("Error loading scoreboard:", e); }
-    }
-
-    loadWebContent();
+    // Initialize both
     loadScoreboard();
-
-    async function loadScoreboard() {
-        try {
-            const res = await fetch(scoreboardURL);
-            const rows = parseCSV(await res.text());
-            const container = document.getElementById('scoreboard-container');
-            container.innerHTML = '';
-
-            const houseClasses = {
-                "குறிஞ்சி": "house-kurinji", "முல்லை": "house-mullai",
-                "மருதம்": "house-marutham", "நெய்தல்": "house-neithal", "பாலை": "house-palai"
-            };
-
-            rows.slice(1).forEach(cols => {
-                if (!cols[0]) return;
-                const houseName = cols[0];
-                const points = cols[1] || "0";
-                const cssClass = houseClasses[houseName.trim()] || "house-kurinji"; 
-
-                container.innerHTML += `
-                    <div class="house-card ${cssClass}">
-                        <h4 style="margin: 0 0 10px 0;">${houseName}</h4>
-                        <span class="house-points">${points}</span><br><small>புள்ளிகள்</small>
-                    </div>`;
-            });
-        } catch (e) {
-            console.error("Scoreboard Error:", e);
-        }
-    }
-
     loadWebContent();
-    loadScoreboard();
 </script>
 
 </body>
