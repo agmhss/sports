@@ -8,7 +8,7 @@
         @import url('https://fonts.googleapis.com/css2?family=Pavanam&display=swap');
 
         :root {
-            --primary-color: #0047AB; /* Sports Blue */
+            --primary-color: #0047AB; 
             --wood-frame: #4e342e;
             --paper-bg: #ffffff;
             --board-bg: #f5f5f5;
@@ -75,34 +75,22 @@
             position: relative;
         }
 
-        .paper-note::after {
-            content: "";
-            position: absolute;
-            top: -12px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 70px;
-            height: 25px;
-            background: rgba(255, 255, 255, 0.7);
-        }
-
         .full-width-note { grid-column: 1 / -1; }
 
         h3 { color: var(--primary-color); border-bottom: 1px solid #eee; padding-bottom: 5px; margin-top: 0; }
         
-        /* Scoreboard Styles */
         .scoreboard-container {
             display: flex;
             justify-content: space-around;
             flex-wrap: wrap;
             margin-top: 20px;
         }
+
         .house-card {
             text-align: center; padding: 15px; border-radius: 8px; width: 120px; margin: 10px;
             background: #fff; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border: 2px dashed #ccc;
         }
         
-        /* இல்லங்களுக்கான தனித்தனி நிறங்கள் */
         .house-kurinji { border-color: #4CAF50; } .house-kurinji h4 { color: #4CAF50; }
         .house-mullai { border-color: #2196F3; } .house-mullai h4 { color: #2196F3; }
         .house-marutham { border-color: #795548; } .house-marutham h4 { color: #795548; }
@@ -113,9 +101,9 @@
         
         .poster-img { width: 100%; max-height: 400px; object-fit: contain; border-radius: 4px; margin-top: 10px; border: 1px solid #ddd; }
         
-        .dynamic-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.95rem; }
-        .dynamic-table th { background-color: #e9ecef; font-weight: bold; padding: 10px; text-align: left; border: 1px solid #ccc; }
-        .dynamic-table td { padding: 10px; border: 1px solid #ddd; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background: #f2f2f2; }
     </style>
 </head>
 <body>
@@ -128,50 +116,46 @@
         <h2>விளையாட்டுத் துறை (Sports Department)</h2>
     </header>
 
-    <div class="content-grid" id="scoreboard-board">
+    <div class="content-grid">
         <div class="paper-note full-width-note" style="background-color: #fffdf0; border-top-color: #FFD700;">
             <h3 style="color: #b8860b; text-align: center;">🏆 இல்லங்களின் புள்ளிப்பட்டியல் (Live Scoreboard) 🏆</h3>
             <div class="scoreboard-container" id="scoreboard-container">
-                <p style="color:#888;">புள்ளிகள் சரிபார்க்கப்படுகின்றன...</p>
+                <p style="color:#888;">புள்ளிகள் ஏற்றப்படுகின்றன...</p>
             </div>
         </div>
     </div>
 
-    <div class="content-grid" id="main-board"></div>
-
+    <div class="content-grid" id="main-board">
+        </div>
 </div>
 
 <script>
-    // ⚠️ உங்களின் 2 CSV லிங்குகளை இங்கே பேஸ்ட் செய்யவும்
-    const webContentURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTvUa-lafFet8lATvvxw5UIJwI0uQ4B_s2YCd9FyAycBRGjgx_iIDmcDSPx76Vbe-SQH0gvNhOFJcrO/pub?gid=0&single=true&output=csv"; // WebContent Tab
-    const scoreboardURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTvUa-lafFet8lATvvxw5UIJwI0uQ4B_s2YCd9FyAycBRGjgx_iIDmcDSPx76Vbe-SQH0gvNhOFJcrO/pub?gid=866796290&single=true&output=csv"; // Scoreboard Tab
+    const webContentURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTvUa-lafFet8lATvvxw5UIJwI0uQ4B_s2YCd9FyAycBRGjgx_iIDmcDSPx76Vbe-SQH0gvNhOFJcrO/pub?gid=0&single=true&output=csv";
+    const scoreboardURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTvUa-lafFet8lATvvxw5UIJwI0uQ4B_s2YCd9FyAycBRGjgx_iIDmcDSPx76Vbe-SQH0gvNhOFJcrO/pub?gid=866796290&single=true&output=csv";
 
-    // CSV Parser & Image Helper
     function parseCSV(data) {
         return data.split(/\r?\n/).map(row => row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(col => col.replace(/"/g, "").trim()));
     }
     
     function getRobustImageUrl(url) {
         if (!url) return "";
-        if (url.includes("drive.google.com")) {
-            const idMatch = url.match(/[-\w]{25,}/);
-            if (idMatch) return `https://drive.google.com/uc?export=view&id=${idMatch[0]}`;
-        }
-        return url;
+        const idMatch = url.match(/[-\w]{25,}/);
+        return idMatch ? `https://drive.google.com/uc?export=view&id=${idMatch[0]}` : url;
     }
 
-    // 1. Load Web Content
     async function loadWebContent() {
-        if(!webContentURL.includes("docs.google.com")) return;
         try {
             const res = await fetch(webContentURL);
             const rows = parseCSV(await res.text());
             const board = document.getElementById('main-board');
             board.innerHTML = '';
 
-            const category = cols[0].replace(/"/g, "").trim();
-                const content = cols[1].replace(/"/g, "").trim();
-                const subtext = cols[2] ? cols[2].replace(/"/g, "").trim() : '';
+            rows.forEach(cols => {
+                if (cols.length < 2 || !cols[0]) return;
+                
+                const category = cols[0];
+                const content = cols[1];
+                const subtext = cols[2] || '';
 
                 if (category === "Vision" || category === "Mission" || category === "Announcement") {
                     const title = category === "Vision" ? "நோக்கம்" : (category === "Mission" ? "செயல்பாடுகள்" : "அறிவிப்பு");
@@ -182,43 +166,32 @@
                         </div>`;
                 } 
                 else if (category === "Poster") {
-                    const finalSrc = getRobustImageUrl(subtext);
-
-                    // படம் லோட் ஆகவில்லை என்றால் சிவப்பு நிறத்தில் பிழைச் செய்தி காட்டும்
                     board.innerHTML += `
                         <div class="paper-note" style="text-align:center;">
                             <h3>${content}</h3>
-                            <img src="${finalSrc}" class="poster-img" alt="Poster" 
-                                 onerror="this.onerror=null; this.src='https://via.placeholder.com/400x200?text=Image+Blocked'; this.nextElementSibling.style.display='block';">
-                            <span class="error-msg" style="display:none;">
-                                ⚠️ இந்தப் படத்தைப் பார்க்க அனுமதி இல்லை. கூகுள் டிரைவில் <b>"Anyone with the link"</b> என்பதை உறுதி செய்யவும்.
-                            </span>
+                            <img src="${getRobustImageUrl(subtext)}" class="poster-img" onerror="this.src='https://via.placeholder.com/400x200?text=Image+Not+Found';">
                         </div>`;
                 }
                 else if (category === "Staff") {
-                    let table = document.getElementById('staff-table');
-                    if (!table) {
+                    let tableDiv = document.getElementById('staff-note');
+                    if (!tableDiv) {
                         board.innerHTML += `
-                            <div class="paper-note">
+                            <div class="paper-note" id="staff-note">
                                 <h3>பொறுப்பு ஆசிரியர்கள்</h3>
                                 <table id="staff-table"><tr><th>பெயர்</th><th>பதவி</th></tr></table>
                             </div>`;
-                        table = document.getElementById('staff-table');
+                        tableDiv = document.getElementById('staff-table');
                     }
+                    const table = document.getElementById('staff-table');
                     table.innerHTML += `<tr><td>${content}</td><td>${subtext}</td></tr>`;
                 }
-                else if (category === "Link") {
-                    linksArea.innerHTML += `<a href="${subtext}" target="_blank">🔗 ${content}</a>`;
-                }
             });
-
         } catch (error) {
-            console.error("Error:", error);
-            document.getElementById('main-board').innerHTML = "<p style='color:red; text-align:center; grid-column:1/-1;'>தகவல்களைப் பெறுவதில் சிக்கல் ஏற்பட்டுள்ளது.</p>";
+            console.error("Content Error:", error);
+        }
+    }
 
-    // 2. Load Live Scoreboard
     async function loadScoreboard() {
-        if(!scoreboardURL.includes("docs.google.com")) return;
         try {
             const res = await fetch(scoreboardURL);
             const rows = parseCSV(await res.text());
@@ -226,19 +199,15 @@
             container.innerHTML = '';
 
             const houseClasses = {
-                "குறிஞ்சி": "house-kurinji", "kurinji": "house-kurinji",
-                "முல்லை": "house-mullai", "mullai": "house-mullai",
-                "மருதம்": "house-marutham", "marutham": "house-marutham",
-                "நெய்தல்": "house-neithal", "neithal": "house-neithal",
-                "பாலை": "house-palai", "palai": "house-palai"
+                "குறிஞ்சி": "house-kurinji", "முல்லை": "house-mullai",
+                "மருதம்": "house-marutham", "நெய்தல்": "house-neithal", "பாலை": "house-palai"
             };
 
             rows.slice(1).forEach(cols => {
-                if (cols.length < 2 || !cols[0]) return;
+                if (!cols[0]) return;
                 const houseName = cols[0];
                 const points = cols[1] || "0";
-                
-                let cssClass = houseClasses[houseName.trim()] || "house-kurinji"; 
+                const cssClass = houseClasses[houseName.trim()] || "house-kurinji"; 
 
                 container.innerHTML += `
                     <div class="house-card ${cssClass}">
@@ -246,10 +215,11 @@
                         <span class="house-points">${points}</span><br><small>புள்ளிகள்</small>
                     </div>`;
             });
-        } catch (e) { console.error(e); }
+        } catch (e) {
+            console.error("Scoreboard Error:", e);
+        }
     }
 
-    // Execute functions
     loadWebContent();
     loadScoreboard();
 </script>
