@@ -131,6 +131,8 @@
 
 <script>
     const webContentURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTvUa-lafFet8lATvvxw5UIJwI0uQ4B_s2YCd9FyAycBRGjgx_iIDmcDSPx76Vbe-SQH0gvNhOFJcrO/pub?gid=0&single=true&output=csv";
+    <script>
+    const webContentURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTvUa-lafFet8lATvvxw5UIJwI0uQ4B_s2YCd9FyAycBRGjgx_iIDmcDSPx76Vbe-SQH0gvNhOFJcrO/pub?gid=0&single=true&output=csv";
     const scoreboardURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTvUa-lafFet8lATvvxw5UIJwI0uQ4B_s2YCd9FyAycBRGjgx_iIDmcDSPx76Vbe-SQH0gvNhOFJcrO/pub?gid=866796290&single=true&output=csv";
 
     function parseCSV(data) {
@@ -138,9 +140,12 @@
     }
     
     function getRobustImageUrl(url) {
-        if (!url) return "";
+        if (!url || url.trim() === "") return "https://via.placeholder.com/400x200?text=No+URL+Provided";
         const idMatch = url.match(/[-\w]{25,}/);
-        return idMatch ? `https://drive.google.com/uc?export=view&id=${idMatch[0]}` : url;
+        if (idMatch && url.includes("drive.google.com")) {
+            return `https://drive.google.com/uc?export=view&id=${idMatch[0]}`;
+        }
+        return url; // Returns original if it's already a direct link
     }
 
     async function loadWebContent() {
@@ -153,43 +158,70 @@
             rows.forEach(cols => {
                 if (cols.length < 2 || !cols[0]) return;
                 
-                const category = cols[0];
-                const content = cols[1];
-                const subtext = cols[2] || '';
+                const category = cols[0].trim();
+                const content = cols[1].trim();
+                const subtext = cols[2] ? cols[2].trim() : '';
 
+                // Handle Text Notes
                 if (category === "Vision" || category === "Mission" || category === "Announcement") {
                     const title = category === "Vision" ? "நோக்கம்" : (category === "Mission" ? "செயல்பாடுகள்" : "அறிவிப்பு");
-                    board.innerHTML += `
-                        <div class="paper-note">
-                            <h3>${title}</h3>
-                            <p>${content}</p>
-                        </div>`;
+                    board.innerHTML += `<div class="paper-note"><h3>${title}</h3><p>${content}</p></div>`;
                 } 
+                
+                // Handle Poster Images
                 else if (category === "Poster") {
+                    const finalSrc = getRobustImageUrl(subtext);
                     board.innerHTML += `
                         <div class="paper-note" style="text-align:center;">
                             <h3>${content}</h3>
-                            <img src="${getRobustImageUrl(subtext)}" class="poster-img" onerror="this.src='https://via.placeholder.com/400x200?text=Image+Not+Found';">
+                            <img src="${finalSrc}" class="poster-img" alt="Poster" 
+                                 onerror="this.src='https://via.placeholder.com/400x200?text=Check+Drive+Permissions';">
                         </div>`;
                 }
-                else if (category === "Staff") {
-                    let tableDiv = document.getElementById('staff-note');
-                    if (!tableDiv) {
+
+                // Handle Links (The Fix)
+                else if (category === "Link") {
+                    let linksNote = document.getElementById('links-note');
+                    if (!linksNote) {
                         board.innerHTML += `
-                            <div class="paper-note" id="staff-note">
-                                <h3>பொறுப்பு ஆசிரியர்கள்</h3>
-                                <table id="staff-table"><tr><th>பெயர்</th><th>பதவி</th></tr></table>
+                            <div class="paper-note" id="links-note">
+                                <h3>முக்கிய இணைப்புகள்</h3>
+                                <div id="links-list" style="display: flex; flex-direction: column; gap: 10px;"></div>
                             </div>`;
-                        tableDiv = document.getElementById('staff-table');
+                        linksNote = document.getElementById('links-list');
                     }
-                    const table = document.getElementById('staff-table');
-                    table.innerHTML += `<tr><td>${content}</td><td>${subtext}</td></tr>`;
+                    const list = document.getElementById('links-list');
+                    list.innerHTML += `<a href="${subtext}" target="_blank" style="color: var(--primary-color); text-decoration: none; font-weight: bold;">🔗 ${content}</a>`;
                 }
             });
         } catch (error) {
-            console.error("Content Error:", error);
+            console.error("Error loading content:", error);
         }
     }
+
+    async function loadScoreboard() {
+        try {
+            const res = await fetch(scoreboardURL);
+            const rows = parseCSV(await res.text());
+            const container = document.getElementById('scoreboard-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            rows.slice(1).forEach(cols => {
+                if (!cols[0]) return;
+                const houseName = cols[0];
+                const points = cols[1] || "0";
+                container.innerHTML += `
+                    <div class="house-card">
+                        <h4 style="margin: 0;">${houseName}</h4>
+                        <span class="house-points">${points}</span><br><small>புள்ளிகள்</small>
+                    </div>`;
+            });
+        } catch (e) { console.error("Error loading scoreboard:", e); }
+    }
+
+    loadWebContent();
+    loadScoreboard();
 
     async function loadScoreboard() {
         try {
