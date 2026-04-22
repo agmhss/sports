@@ -14,28 +14,22 @@
             --board-bg: #f5f5f5;
         }
 
-        body { background: #dcdcdc; font-family: 'Pavanam', sans-serif; margin: 0; padding: 15px; display: flex; justify-content: center; }
+        body { background: #dcdcdc; font-family: 'Pavanam', sans-serif; margin: 0; padding: 10px; display: flex; justify-content: center; }
 
         .whiteboard {
             background-color: var(--board-bg);
             width: 100%; max-width: 1100px; min-height: 95vh;
             border: 12px solid var(--wood-frame); border-radius: 8px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.3); padding: 30px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3); padding: 25px;
             position: relative; box-sizing: border-box;
         }
 
-        .home-btn {
-            position: absolute; top: 10px; left: 10px;
-            background: var(--primary-color); color: white;
-            text-decoration: none; padding: 6px 12px; border-radius: 4px; font-size: 0.8rem; z-index: 10;
-        }
-
-        header { text-align: center; border-bottom: 2px solid #ddd; margin-bottom: 25px; padding-bottom: 10px; }
-        header h1 { color: var(--primary-color); margin: 0; font-size: 1.6rem; }
+        header { text-align: center; border-bottom: 2px solid #ddd; margin-bottom: 20px; padding-bottom: 10px; }
+        header h1 { color: var(--primary-color); margin: 0; font-size: 1.5rem; }
 
         .content-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 20px; margin-bottom: 30px;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px; margin-bottom: 20px;
         }
 
         .paper-note {
@@ -47,10 +41,15 @@
 
         h3 { color: var(--primary-color); border-bottom: 1px solid #eee; padding-bottom: 5px; margin-top: 0; }
         
-        /* SCOREBOARD STYLES */
+        /* STAFF TABLE AT TOP */
+        .staff-table { width: 100%; border-collapse: collapse; margin-top: 10px; background: white; }
+        .staff-table th, .staff-table td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        .staff-table th { background: #f0f4f8; color: var(--primary-color); }
+
+        /* SCOREBOARD */
         .scoreboard-container { display: flex; justify-content: space-around; flex-wrap: wrap; }
         .house-card {
-            text-align: center; padding: 10px; border-radius: 8px; width: 110px; margin: 5px;
+            text-align: center; padding: 10px; border-radius: 8px; width: 100px; margin: 5px;
             background: #fff; border: 3px solid #ccc;
         }
         .house-குறிஞ்சி { border-color: #4CAF50; color: #4CAF50; }
@@ -58,35 +57,43 @@
         .house-மருதம் { border-color: #795548; color: #795548; }
         .house-நெய்தல் { border-color: #009688; color: #009688; }
         .house-பாலை { border-color: #FF9800; color: #FF9800; }
-        .house-points { font-size: 2rem; font-weight: bold; color: #333; display: block; }
+        .house-points { font-size: 1.8rem; font-weight: bold; color: #333; display: block; }
 
-        /* POSTER FIX: Large and prominent */
+        /* POSTER - FULL WIDTH AND LARGE */
+        .poster-container { text-align: center; width: 100%; }
         .poster-img { 
-            width: 100%; 
-            height: auto; 
-            max-height: 800px; /* Increased to allow large posters */
-            display: block;
-            margin: 15px auto;
-            border-radius: 5px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            width: 100%; height: auto; max-width: 900px; 
+            margin-top: 15px; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
 
-        /* STAFF TABLE FIX */
-        .staff-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        .staff-table th, .staff-table td { border: 1px solid #ddd; padding: 10px; text-align: left; }
-        .staff-table th { background: #f8f9fa; color: var(--primary-color); }
-
-        .link-item { display: block; margin: 8px 0; color: #0047AB; text-decoration: none; font-weight: bold; }
+        /* LINKS - SPACIOUS LAYOUT */
+        .links-flex { 
+            display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; padding: 15px 0;
+        }
+        .link-item { 
+            background: #fdfdfd; padding: 12px 20px; border: 1px solid #ddd; border-radius: 30px;
+            color: var(--primary-color); text-decoration: none; font-weight: bold;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.05); transition: 0.3s;
+        }
+        .link-item:hover { background: var(--primary-color); color: white; }
     </style>
 </head>
 <body>
 
 <div class="whiteboard">
-    <a href="index.html" class="home-btn">🏠 முகப்பு</a>
     <header>
         <h1>அண்ணா அரசு மாதிரி மேல்நிலைப் பள்ளி, பட்டீஸ்வரம்</h1>
         <h2>விளையாட்டுத் துறை (Sports Department)</h2>
     </header>
+
+    <div id="staff-section" class="content-grid" style="display:none;">
+        <div class="paper-note full-width-note">
+            <h3>👥 பொறுப்பு ஆசிரியர்கள் (Staff in Charge)</h3>
+            <table class="staff-table" id="staff-list">
+                <tr><th>பெயர்</th><th>பதவி</th></tr>
+            </table>
+        </div>
+    </div>
 
     <div class="content-grid">
         <div class="paper-note full-width-note" style="background-color: #fffdf0; border-top-color: #FFD700;">
@@ -96,6 +103,13 @@
     </div>
 
     <div class="content-grid" id="main-board"></div>
+
+    <div id="links-section" class="content-grid" style="display:none;">
+        <div class="paper-note full-width-note">
+            <h3>🔗 முக்கிய இணைப்புகள் (Important Links)</h3>
+            <div id="link-list" class="links-flex"></div>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -108,10 +122,11 @@
         );
     }
 
+    // NCC Style Image Fix
     function getRobustImageUrl(url) {
         if (!url) return "";
         const idMatch = url.match(/[-\w]{25,}/);
-        return idMatch ? `https://docs.google.com/uc?export=view&id=${idMatch[0]}` : url;
+        return idMatch ? `https://lh3.googleusercontent.com/d/${idMatch[0]}` : url;
     }
 
     async function loadScoreboard() {
@@ -142,29 +157,23 @@
                 const content = cols[1].trim();
                 const subtext = cols[2] ? cols[2].trim() : '';
 
-                if (["vision", "mission", "announcement"].includes(category)) {
-                    const titles = {"vision": "நோக்கம்", "mission": "செயல்பாடுகள்", "announcement": "அறிவிப்பு"};
-                    board.innerHTML += `<div class="paper-note"><h3>${titles[category]}</h3><p>${content}</p></div>`;
-                } 
+                if (category === "staff") {
+                    document.getElementById('staff-section').style.display = 'grid';
+                    document.getElementById('staff-list').innerHTML += `<tr><td>${content}</td><td>${subtext}</td></tr>`;
+                }
                 else if (category === "poster") {
-                    board.innerHTML += `<div class="paper-note full-width-note" style="text-align:center;">
+                    board.innerHTML += `<div class="paper-note full-width-note poster-container">
                         <h3>${content}</h3>
                         <img src="${getRobustImageUrl(subtext)}" class="poster-img" onerror="this.src='https://via.placeholder.com/800x400?text=Check+Drive+Permissions';">
                     </div>`;
                 }
-                else if (category === "staff") {
-                    let staffBox = document.getElementById('staff-box');
-                    if (!staffBox) {
-                        board.innerHTML += `<div class="paper-note" id="staff-box"><h3>பொறுப்பு ஆசிரியர்கள்</h3><table class="staff-table" id="staff-list"><tr><th>பெயர்</th><th>பதவி</th></tr></table></div>`;
-                    }
-                    document.getElementById('staff-list').innerHTML += `<tr><td>${content}</td><td>${subtext}</td></tr>`;
-                }
                 else if (category === "link") {
-                    let linkBox = document.getElementById('link-box');
-                    if (!linkBox) {
-                        board.innerHTML += `<div class="paper-note" id="link-box"><h3>முக்கிய இணைப்புகள்</h3><div id="link-list"></div></div>`;
-                    }
-                    document.getElementById('link-list').innerHTML += `<a href="${subtext}" target="_blank" class="link-item">🔗 ${content}</a>`;
+                    document.getElementById('links-section').style.display = 'grid';
+                    document.getElementById('link-list').innerHTML += `<a href="${subtext}" target="_blank" class="link-item">🌐 ${content}</a>`;
+                }
+                else if (["vision", "mission", "announcement"].includes(category)) {
+                    const titles = {"vision": "நோக்கம்", "mission": "செயல்பாடுகள்", "announcement": "அறிவிப்பு"};
+                    board.innerHTML += `<div class="paper-note"><h3>${titles[category]}</h3><p>${content}</p></div>`;
                 }
             });
         } catch (e) { console.error(e); }
